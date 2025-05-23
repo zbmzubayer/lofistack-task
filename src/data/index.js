@@ -37,7 +37,7 @@ export const PRODUCTS = [
 // Assuming these are the IDs of the products in the cart
 const cartItemIds = [1, 2];
 
-// If product has free item, add it to cart and set the quantity to 1 and price to 0
+// This function filters the PRODUCTS array to get the items in the cart
 export const getCartItems = () => {
   const cartItems = PRODUCTS.filter((product) =>
     cartItemIds.includes(product.id)
@@ -46,13 +46,21 @@ export const getCartItems = () => {
     quantity: 1,
   }));
 
+  // If product has free item, add it to cart and set the quantity to 1 and price to 0
   const freeItems = cartItems
     .filter((item) => item.freeItemId)
-    .map((item) => ({
-      ...PRODUCTS.find((product) => product.id === item.freeItemId),
-      price: 0,
-      quantity: 1,
-    }));
+    .map((item) => {
+      const freeProduct = PRODUCTS.find(
+        (product) => product.id === item.freeItemId
+      );
+      if (freeProduct) {
+        return {
+          ...freeProduct,
+          quantity: 1,
+          price: 0,
+        };
+      }
+    });
 
   return [...cartItems, ...freeItems];
 };

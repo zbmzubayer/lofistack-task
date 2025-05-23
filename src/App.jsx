@@ -4,6 +4,7 @@ import CartItem from "./components/CartItem";
 
 function App() {
   const [cartItems, setCartItems] = useState(getCartItems());
+  console.log(cartItems);
 
   const handleQuantityChange = (id, quantity) => {
     // Ensure quantity is between 1 and 10
@@ -15,7 +16,7 @@ function App() {
       if (item.id === id) {
         return { ...item, quantity: validQuantity };
       }
-      if (item.id === selectedItem.freeItemId) {
+      if (item.id === selectedItem.freeItemId && item.price === 0) {
         return { ...item, quantity: validQuantity };
       }
       return item;
@@ -24,12 +25,28 @@ function App() {
   };
 
   // Remove item from cart and its free item if exists
-  const handleRemoveItem = (id, freeItemId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== id && item.id !== freeItemId)
-    );
+  const handleRemoveItem = (id) => {
+    let freeItemId = null;
+    let updatedCartItems = cartItems.filter((item) => {
+      if (item.id === id && item.price > 0) {
+        freeItemId = item.freeItemId;
+        return false;
+      }
+      return true;
+    });
+    // Remove free item if it exists
+    if (freeItemId) {
+      updatedCartItems = updatedCartItems.filter((item) => {
+        if (item.id === freeItemId && item.price === 0) {
+          return false;
+        }
+        return true;
+      });
+    }
+    setCartItems(updatedCartItems);
   };
 
+  // Calculate subtotal
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -52,9 +69,9 @@ function App() {
 
         <div className="space-y-6">
           {cartItems.length > 0 ? (
-            cartItems.map((item) => (
+            cartItems.map((item, index) => (
               <CartItem
-                key={item.id}
+                key={index}
                 product={item}
                 onQuantityChange={handleQuantityChange}
                 onRemoveItem={handleRemoveItem}
@@ -96,7 +113,7 @@ function App() {
           </div>
         </div>
         <div className="mt-4 flex justify-end">
-          <button className="inline-flex items-center justify-center bg-black text-white py-2 px-4">
+          <button className="inline-flex items-center cursor-pointer justify-center bg-black text-white py-2 px-4">
             Checkout
           </button>
         </div>

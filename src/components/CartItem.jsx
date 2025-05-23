@@ -57,7 +57,7 @@ export default function CartItem({ product, onQuantityChange, onRemoveItem }) {
         {product.price > 0 && (
           <button
             className="p-0.5 cursor-pointer inline-flex justify-center items-center bg-gray-300 rounded-full"
-            onClick={() => onRemoveItem(product.id, product.freeItemId || null)}
+            onClick={() => onRemoveItem(product.id)}
           >
             <XIcon className="size-2.5 " />
           </button>
