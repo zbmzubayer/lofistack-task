@@ -3,8 +3,7 @@ import { getCartItems } from "./data";
 import CartItem from "./components/CartItem";
 
 function App() {
-  const [cartItems, setCartItems] = useState(getCartItems());
-  console.log(cartItems);
+  const [cartItems, setCartItems] = useState(getCartItems);
 
   const handleQuantityChange = (id, quantity) => {
     // Ensure quantity is between 1 and 10
